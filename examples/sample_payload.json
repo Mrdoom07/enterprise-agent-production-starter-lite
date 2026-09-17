@@ -1,0 +1,6 @@
+{
+  "task_id": "demo-1",
+  "input_data": "Validate Invoice 1234 for Acme Corp",
+  "risk_level": "LOW",
+  "requires_evidence": true
+}
