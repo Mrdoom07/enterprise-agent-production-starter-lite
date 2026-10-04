@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agent-production-starter-lite"
-version = "0.1.0"
-description = "Free reference starter for typed AI-agent policy and approval boundaries"
+version = "0.2.0"
+description = "Free reference starter for typed AI-agent policy, validation, idempotency and approval boundaries"
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.115,<1",
