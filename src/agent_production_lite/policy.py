@@ -1,14 +1,19 @@
-from .models import AgentState, Decision, RiskLevel, Status, TaskRequest
+from .models import AgentState, Decision, IndependentValidation, RiskLevel, Status, TaskRequest
 
 
-def decide(request: TaskRequest, state: AgentState, threshold: float = 0.80) -> Decision:
-    """Keep policy outside the worker/model boundary."""
+def decide(
+    request: TaskRequest,
+    state: AgentState,
+    validation: IndependentValidation,
+    threshold: float = 0.80,
+    idempotency_key: str | None = None,
+) -> Decision:
     if state.status == Status.FAILED:
         route, reason = "HUMAN_REVIEW", "worker_error"
     elif request.risk_level == RiskLevel.HIGH:
         route, reason = "HUMAN_APPROVAL", "high_risk_action"
-    elif state.confidence_score < threshold:
-        route, reason = "HUMAN_REVIEW", "low_confidence"
+    elif validation.score < threshold:
+        route, reason = "HUMAN_REVIEW", "independent_validation_failed"
     elif request.requires_evidence and not state.evidence:
         route, reason = "REWORK", "missing_evidence"
     else:
@@ -19,4 +24,6 @@ def decide(request: TaskRequest, state: AgentState, threshold: float = 0.80) -> 
         route=route,
         reason=reason,
         state=state,
+        validation=validation,
+        idempotency_key=idempotency_key,
     )
